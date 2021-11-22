@@ -83,7 +83,7 @@ class puppetserver
       '-Xms' => '1g',
     },
     postgres_version => $postgres_version,
-    cipher_suites    => $puppet::server_cipher_suites.join(',')
+    ssl_deploy_certs => true
   }
 
   if $::trusted['extensions']['pp_environment'] == 'live' {
