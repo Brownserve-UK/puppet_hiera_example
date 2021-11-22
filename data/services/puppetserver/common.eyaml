@@ -11,5 +11,3 @@ lookup_options:
 # The below uses the foreman puppet module to set DNS alt names
 puppet::dns_alt_names:
     - "%{::hostname}"
-puppetserver::puppetboard::puppetboard_dir: "/srv/puppetboard-docker"
-puppetserver::puppetboard::: 'v3.2.0'
