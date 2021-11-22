@@ -14,6 +14,8 @@
 #   https://puppet.com/docs/puppet/latest/lang_facts_builtin_variables.html
 # @param puppet_dbserver
 #   The hostname of the PuppetDB server (defaults to this node)
+# @param install_puppetdb
+#   Whether to install PuppetDB (defaults to true)
 class puppetserver
 (
   $puppet_majorversion,
@@ -21,6 +23,7 @@ class puppetserver
   $puppet_user = 'puppet',
   $puppet_group = 'puppet',
   $hiera_yaml_path = "${::settings::codedir}/hiera.yaml",
+  Boolean $install_puppetdb = true,
   $puppet_dbserver = $::fqdn,
 )
 {
@@ -75,26 +78,36 @@ class puppetserver
     fail("Unsupported Puppet version: ${puppet_majorversion}.")
   }
 
-  # Install and configure PuppetDB
-  class { 'puppetdb::globals':
-    version => $puppetdb_package_version,
-  }
+  if ($install_puppetdb)
+  {
+    # Install and configure PuppetDB
+    class { 'puppetdb::globals':
+      version => $puppetdb_package_version,
+    }
 
-  class { 'puppetdb':
-    node_ttl           => '14d',
-    node_purge_ttl     => '30d',
-    report_ttl         => '5d',
-    # Make the Java VM use less RAM (adjust for your environment)
-    java_args          => {
-      '-Xmx' => '1g',
-      '-Xms' => '1g',
-    },
-    postgres_version   => $postgres_version,
-    # ciphers used between puppetserver and puppetdb. They do need to match
-    cipher_suites      => join($cipher_suites, ', '),
-    ssl_deploy_certs   => true,
-    ssl_dir            => '/etc/puppetlabs/puppetdb/ssl',
-    ssl_set_cert_paths => true,
+    class { 'puppetdb':
+      node_ttl           => '14d',
+      node_purge_ttl     => '30d',
+      report_ttl         => '5d',
+      # Make the Java VM use less RAM (adjust for your environment)
+      java_args          => {
+        '-Xmx' => '1g',
+        '-Xms' => '1g',
+      },
+      postgres_version   => $postgres_version,
+      # ciphers used between puppetserver and puppetdb. They do need to match
+      cipher_suites      => join($cipher_suites, ', '),
+      ssl_deploy_certs   => true,
+      ssl_dir            => '/etc/puppetlabs/puppetdb/ssl',
+      ssl_set_cert_paths => true,
+    }
+    $puppet_require = [Class['puppetdb']]
+    $server_reports = 'puppetdb'
+    $server_storeconfigs = true
+  }
+  else
+  {
+    $puppet_require = undef
   }
 
   if $::trusted['extensions']['pp_environment'] == 'live' {
@@ -143,8 +156,8 @@ class puppetserver
     # disable getting external nodes from foreman
     server_external_nodes       => '',
     # only store the reports in the puppetdb
-    server_reports              => 'puppetdb',
-    server_storeconfigs         => true,
+    server_reports              => $server_reports,
+    server_storeconfigs         => $server_storeconfigs,
     server_user                 => $puppet_user,
     server_group                => $puppet_group,
     # We do not use a list of common modules to be shared between environments
@@ -174,12 +187,16 @@ class puppetserver
 
     *                           => $puppet_tuning_parameters,
 
-    require                     => [Class['puppetdb']],
+    require                     => $puppet_require,
   }
 
-  # Will manage puppetdb.conf for us
-  class { 'puppet::server::puppetdb':
-    server => $puppet_dbserver,
+  if ($install_puppetdb)
+  {
+    # Will manage puppetdb.conf for us
+    class { 'puppet::server::puppetdb':
+      server  => $puppet_dbserver,
+      require => $puppet_require
+    }
   }
 
   class {'hiera':
