@@ -6,4 +6,5 @@ classes:
   - puppetserver
 puppetserver::puppet_majorversion: 6
 puppetserver::puppet_environment: 'production'
-
+# Don't install PuppetDB on the bootstrap environment as the certificates won't exist until we run a puppet agent -t
+puppetserver::install_puppetdb: false
