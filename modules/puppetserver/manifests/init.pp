@@ -92,7 +92,7 @@ class puppetserver
     postgres_version => $postgres_version,
     # ciphers used between puppetserver and puppetdb. They do need to match
     cipher_suites    => join($cipher_suites, ', '),
-    disable_ssl      => true,
+    ssl_deploy_certs => true,
   }
 
   if $::trusted['extensions']['pp_environment'] == 'live' {
@@ -178,7 +178,6 @@ class puppetserver
   # Will manage puppetdb.conf for us
   class { 'puppet::server::puppetdb':
     server => $puppet_dbserver,
-    port   => 8080,
   }
 
   class {'hiera':
