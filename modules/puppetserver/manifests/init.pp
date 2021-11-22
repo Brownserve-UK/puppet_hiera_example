@@ -163,10 +163,11 @@ class puppetserver
     require                     => [Class['puppetdb']],
   }
 
+  # Set the puppetdb cipher suites
+  class { 'puppetdb::server': cipher_suites => $puppet::server_cipher_suites.join(',') }
   # Will manage puppetdb.conf for us
   class { 'puppet::server::puppetdb':
-    server        => $puppet_dbserver,
-    cipher_suites => $puppet::server_cipher_suites.join(',')
+    server => $puppet_dbserver,
   }
 
   class {'hiera':
