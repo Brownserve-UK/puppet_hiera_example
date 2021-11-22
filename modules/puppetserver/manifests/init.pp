@@ -41,41 +41,74 @@ class puppetserver
       shell  => '/usr/sbin/nologin',
     }
 
-  # We lock the versions in to the below as we know they work at the time of writing. 
-  # We can look to overwrite, make these more flexible in the future.
-  if $puppet_majorversion == 6
+  # We're very specific about what values we set to both avoid automatically breaking things and to give us a stable
+  # bootstrap environment.
+  case $puppet_majorversion
   {
-    # Check what versions are supported at https://puppet.com/docs/puppetdb/6/overview.html
-    $postgres_version = '12'
-    # Versions can be found at https://puppet.com/docs/puppet/6/server/release_notes.html
-    $puppetserver_version = '6.17.1'
-    $puppetserver_package_version = "6.17.1-1${::lsbdistcodename}"
-    # Versions can be found at https://puppet.com/docs/puppetdb/6/release_notes.html
-    $puppetdb_package_version = "6.19.1-1${::lsbdistcodename}"
-    # Do not let puppet upgrade to the latest version of puppet-agent.
-    # That's because for major upgrades, we are supposed to upgrade puppetserver
-    # before puppet-agent.
-    $puppet_agent_package_version = "6.25.1-1${::lsbdistcodename}"
-    # Hiera 5 is the current latest version of Hiera
-    $hiera_version = '5'
-    # with hiera v5, hierarchies should be defined in the environment and module layers
-    # hiera.yaml files which are committed with our puppet source code.
-    $hiera_hierarchies = []
-    # Versions can be found at https://github.com/voxpupuli/hiera-eyaml/tags
-    $eyaml_version = '3.2.2'
-    # Picked default cipher_suites values from https://github.com/theforeman/puppet-puppet/pull/721
-    $cipher_suites = [
-      'TLS_DHE_RSA_WITH_AES_128_GCM_SHA256',
-      'TLS_DHE_RSA_WITH_AES_256_GCM_SHA384',
-      'TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256',
-      'TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384',
-      'TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256',
-      'TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384',
-    ]
-  }
-  else
-  {
-    fail("Unsupported Puppet version: ${puppet_majorversion}.")
+    7:
+    {
+      # Versions can be found here https://puppet.com/docs/puppet/7/server/release_notes.html
+      $puppetserver_version = '7.4.2'
+      $puppetserver_package_version = "7.4.2-1${::lsbdistcodename}"
+      # Versions can be found here https://puppet.com/docs/puppetdb/7/release_notes.html
+      $puppetdb_package_version = '7.7.1'
+      # Minium of 11, supported versions can be found at https://puppet.com/docs/puppetdb/7/overview.html
+      $postgres_version = '14'
+      # Do not let puppet upgrade to the latest version of puppet-agent.
+      # That's because for major upgrades, we are supposed to upgrade puppetserver
+      # before puppet-agent.
+      $puppet_agent_package_version = "7.12.1-1${::lsbdistcodename}"
+      # Hiera 5 is the current latest version of Hiera
+      $hiera_version = '5'
+      # with hiera v5, hierarchies should be defined in the environment and module layers
+      # hiera.yaml files which are committed with our puppet source code.
+      $hiera_hierarchies = []
+      # Versions can be found at https://github.com/voxpupuli/hiera-eyaml/tags
+      $eyaml_version = '3.2.2'
+      # Picked default cipher_suites values from https://github.com/theforeman/puppet-puppet/pull/721
+      $cipher_suites = [
+        'TLS_DHE_RSA_WITH_AES_128_GCM_SHA256',
+        'TLS_DHE_RSA_WITH_AES_256_GCM_SHA384',
+        'TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256',
+        'TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384',
+        'TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256',
+        'TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384',
+      ]
+    }
+    6:
+    {
+        # Check what versions are supported at https://puppet.com/docs/puppetdb/6/overview.html
+      $postgres_version = '12'
+      # Versions can be found at https://puppet.com/docs/puppet/6/server/release_notes.html
+      $puppetserver_version = '6.17.1'
+      $puppetserver_package_version = "6.17.1-1${::lsbdistcodename}"
+      # Versions can be found at https://puppet.com/docs/puppetdb/6/release_notes.html
+      $puppetdb_package_version = "6.19.1-1${::lsbdistcodename}"
+      # Do not let puppet upgrade to the latest version of puppet-agent.
+      # That's because for major upgrades, we are supposed to upgrade puppetserver
+      # before puppet-agent.
+      $puppet_agent_package_version = "6.25.1-1${::lsbdistcodename}"
+      # Hiera 5 is the current latest version of Hiera
+      $hiera_version = '5'
+      # with hiera v5, hierarchies should be defined in the environment and module layers
+      # hiera.yaml files which are committed with our puppet source code.
+      $hiera_hierarchies = []
+      # Versions can be found at https://github.com/voxpupuli/hiera-eyaml/tags
+      $eyaml_version = '3.2.2'
+      # Picked default cipher_suites values from https://github.com/theforeman/puppet-puppet/pull/721
+      $cipher_suites = [
+        'TLS_DHE_RSA_WITH_AES_128_GCM_SHA256',
+        'TLS_DHE_RSA_WITH_AES_256_GCM_SHA384',
+        'TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256',
+        'TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384',
+        'TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256',
+        'TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384',
+      ]
+    }
+    default:
+    {
+      fail("Unsupported Puppet version: ${puppet_majorversion}.")
+    }
   }
 
   # On bootstrap installations puppetdb will fail to start, this is because the ssl keys are not generated during a 'puppet apply'
