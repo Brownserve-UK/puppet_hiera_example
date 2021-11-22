@@ -36,11 +36,11 @@ class puppetserver::puppetboard
   }
 
   docker::run { 'puppetboard':
-    image   => "puppetboard:${puppetboard_version}",
-    labels  => ['puppetboard'],
-    ports   => ['80:80'],
-    volumes => ["${settings::ssldir}:/ssl"],
-    env     => [
+    image            => "puppetboard:${puppetboard_version}",
+    labels           => ['puppetboard'],
+    ports            => ['80:80'],
+    volumes          => ["${settings::ssldir}:/ssl"],
+    env              => [
       "PUPPETDB_HOST=${::fqdn}",
       'PUPPETDB_PORT=8081',
       'PUPPETDB_SSL_VERIFY=/ssl/certs/ca.pem',
@@ -51,6 +51,6 @@ class puppetserver::puppetboard
       'UNRESPONSIVE_HOURS=24',
     ],
     extra_parameters => "--add-host='${::fqdn}:${::ipaddress}'", # https://rollout.io/blog/using-the-add-host-flag-for-dns-mapping-within-docker-containers/
-    require => Docker::Image['puppetboard'],
+    require          => Docker::Image['puppetboard'],
   }
 }
