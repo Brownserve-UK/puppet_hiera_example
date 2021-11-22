@@ -51,7 +51,7 @@ class puppetserver
       $puppetserver_version = '7.4.2'
       $puppetserver_package_version = "7.4.2-1${::lsbdistcodename}"
       # Versions can be found here https://puppet.com/docs/puppetdb/7/release_notes.html
-      $puppetdb_package_version = '7.7.1'
+      $puppetdb_package_version = "7.7.1-1${::lsbdistcodename}"
       # Minium of 11, supported versions can be found at https://puppet.com/docs/puppetdb/7/overview.html
       $postgres_version = '14'
       # Do not let puppet upgrade to the latest version of puppet-agent.
