@@ -165,7 +165,8 @@ class puppetserver
 
   # Will manage puppetdb.conf for us
   class { 'puppet::server::puppetdb':
-    server => $puppet_dbserver,
+    server        => $puppet_dbserver,
+    cipher_suites => $puppet::server_cipher_suites.join(',')
   }
 
   class {'hiera':
