@@ -1,6 +1,10 @@
 ---
+classes:
+    - puppetserver::puppetboard # Optional - remove this if you don't want it in your environment
 puppet::dns_alt_names:
     - "%{::hostname}.local"
     - "puppetserver"
     - "puppetserver.local"
 puppetserver::puppet_environment: 'production'
+puppetserver::puppetboard::puppetboard_version: 'v8.0.0'
+puppetserver::puppetboard::puppetboard_dir: '/srv/puppetboard-docker'
