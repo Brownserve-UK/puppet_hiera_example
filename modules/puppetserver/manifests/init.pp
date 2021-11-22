@@ -128,11 +128,9 @@ class puppetserver
     server_foreman              => false,
     # disable getting external nodes from foreman
     server_external_nodes       => '',
-    # Will manage puppetdb.conf for us
-    server_puppetdb_host        => $puppet_dbserver,
     # only store the reports in the puppetdb
     server_reports              => 'puppetdb',
-    server_storeconfigs_backend => 'puppetdb',
+    server_storeconfigs         => true,
     server_user                 => $puppet_user,
     server_group                => $puppet_group,
     # We do not use a list of common modules to be shared between environments
@@ -163,6 +161,11 @@ class puppetserver
     *                           => $puppet_tuning_parameters,
 
     require                     => [Class['puppetdb']],
+  }
+
+  # Will manage puppetdb.conf for us
+  class { 'puppet::server::puppetdb':
+    server => $puppet_dbserver,
   }
 
   class {'hiera':
