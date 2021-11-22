@@ -81,18 +81,20 @@ class puppetserver
   }
 
   class { 'puppetdb':
-    node_ttl         => '14d',
-    node_purge_ttl   => '30d',
-    report_ttl       => '5d',
+    node_ttl           => '14d',
+    node_purge_ttl     => '30d',
+    report_ttl         => '5d',
     # Make the Java VM use less RAM (adjust for your environment)
-    java_args        => {
+    java_args          => {
       '-Xmx' => '1g',
       '-Xms' => '1g',
     },
-    postgres_version => $postgres_version,
+    postgres_version   => $postgres_version,
     # ciphers used between puppetserver and puppetdb. They do need to match
-    cipher_suites    => join($cipher_suites, ', '),
-    ssl_deploy_certs => true,
+    cipher_suites      => join($cipher_suites, ', '),
+    ssl_deploy_certs   => true,
+    ssl_dir            => '/etc/puppetlabs/puppetdb/ssl',
+    ssl_set_cert_paths => true,
   }
 
   if $::trusted['extensions']['pp_environment'] == 'live' {
