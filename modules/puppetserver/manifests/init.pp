@@ -108,6 +108,8 @@ class puppetserver
   else
   {
     $puppet_require = undef
+    $server_reports = undef
+    $server_storeconfigs = undef
   }
 
   if $::trusted['extensions']['pp_environment'] == 'live' {
