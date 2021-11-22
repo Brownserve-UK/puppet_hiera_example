@@ -3,14 +3,13 @@
 # Configures the iptables firewall on the puppet server to allow expected services.
 class puppetserver::firewall {
 
-  package { 'iptables-persistent':
-    ensure => present,
+  Firewall {
+    require => undef,
   }
 
   firewall { '000 accept all icmp':
-    proto   => 'icmp',
-    action  => 'accept',
-    require => Package['iptables-persistent'],
+    proto  => 'icmp',
+    action => 'accept',
   }
   -> firewall { '001 accept all to lo interface':
     proto   => 'all',
