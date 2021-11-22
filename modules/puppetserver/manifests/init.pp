@@ -60,6 +60,15 @@ class puppetserver
     $hiera_hierarchies = []
     # Versions can be found at https://github.com/voxpupuli/hiera-eyaml/tags
     $eyaml_version = '3.2.2'
+    # Picked default cipher_suites values from https://github.com/theforeman/puppet-puppet/pull/721
+    $cipher_suites = [
+      'TLS_DHE_RSA_WITH_AES_128_GCM_SHA256',
+      'TLS_DHE_RSA_WITH_AES_256_GCM_SHA384',
+      'TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256',
+      'TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384',
+      'TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256',
+      'TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384',
+    ]
   }
   else
   {
@@ -75,15 +84,14 @@ class puppetserver
     node_ttl         => '14d',
     node_purge_ttl   => '30d',
     report_ttl       => '5d',
-    # do not disable ssl as it is needed in puppetdb.conf (server_urls)
-    disable_ssl      => false,
     # Make the Java VM use less RAM (adjust for your environment)
     java_args        => {
       '-Xmx' => '1g',
       '-Xms' => '1g',
     },
     postgres_version => $postgres_version,
-    ssl_deploy_certs => true
+    # ciphers used between puppetserver and puppetdb. They do need to match
+    cipher_suites    => join($cipher_suites, ', '),
   }
 
   if $::trusted['extensions']['pp_environment'] == 'live' {
@@ -123,6 +131,8 @@ class puppetserver
     server_version              => $puppetserver_package_version,
     # used by foreman to setup the correct config options.
     server_puppetserver_version => $puppetserver_version,
+    # ciphers used between puppetserver and puppetdb. They do need to match
+    server_cipher_suites        => $cipher_suites,
     # Which Puppet environment to use
     environment                 => $puppet_environment,
     # disable integration with foreman
