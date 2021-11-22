@@ -92,6 +92,7 @@ class puppetserver
     postgres_version => $postgres_version,
     # ciphers used between puppetserver and puppetdb. They do need to match
     cipher_suites    => join($cipher_suites, ', '),
+    disable_ssl      => true,
   }
 
   if $::trusted['extensions']['pp_environment'] == 'live' {
