@@ -6,5 +6,6 @@ puppet::dns_alt_names:
     - "puppetserver"
     - "puppetserver.local"
 puppetserver::puppet_environment: 'production'
-puppetserver::puppetboard::puppetboard_version: 'v8.0.0'
+# You can find the version here: https://github.com/voxpupuli/puppetboard
+puppetserver::puppetboard::puppetboard_version: 'v3.2.0'
 puppetserver::puppetboard::puppetboard_dir: '/srv/puppetboard-docker'
