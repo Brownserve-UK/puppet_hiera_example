@@ -164,7 +164,7 @@ class puppetserver
   }
 
   # Set the puppetdb cipher suites
-  class { 'puppetdb::server': cipher_suites => $puppet::server_cipher_suites.join(',') }
+  class { '::puppetdb': cipher_suites => $puppet::server_cipher_suites.join(',') }
   # Will manage puppetdb.conf for us
   class { 'puppet::server::puppetdb':
     server => $puppet_dbserver,
