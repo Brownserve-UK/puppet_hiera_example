@@ -1,0 +1,3 @@
+---
+# Applies to all nodes (and accepts encrypted secrets)
+# this would be a good place to define any secrets that should apply to all nodes, for example user accounts to create or certificates to install.

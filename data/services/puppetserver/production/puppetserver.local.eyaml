@@ -1,0 +1,6 @@
+---
+puppet::dns_alt_names:
+    - "%{::hostname}.local"
+    - "puppetserver"
+    - "puppetserver.local"
+puppetserver::puppet_environment: 'production'

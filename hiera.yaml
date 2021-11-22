@@ -1,0 +1,39 @@
+---
+# Example hiera configuration.
+version: 5
+
+defaults:
+  datadir: .
+  data_hash: yaml_data
+
+hierarchy:
+
+    - name: "Per-node secrets (eyaml)"
+      lookup_key: eyaml_lookup_key # eyaml backend
+      # The location of your puppet masters eyaml keys
+      options:
+          pkcs7_private_key: /etc/puppetlabs/puppet/keys/private_key.pkcs7.pem 
+          pkcs7_public_key:  /etc/puppetlabs/puppet/keys/public_key.pkcs7.pem
+      paths:
+          - "data/%{trusted.certname}.eyaml"
+
+          # As per hiera merging this order is correct as the higher stuff on the list overwrites the lower if keys share the same name:
+          # https://puppet.com/docs/hiera/3.3/lookup_types.html#native-merging
+          - "data/services/%{trusted.extensions.pp_service}/%{trusted.extensions.pp_environment}/%{trusted.extensions.pp_role}/%{trusted.certname}.eyaml"
+          - "data/services/%{trusted.extensions.pp_service}/%{trusted.extensions.pp_environment}/%{trusted.certname}.eyaml"
+          - "data/services/%{trusted.extensions.pp_service}/%{trusted.extensions.pp_environment}/%{trusted.extensions.pp_role}.eyaml"
+          - "data/services/%{trusted.extensions.pp_service}/%{trusted.extensions.pp_environment}/common.eyaml"
+          - "data/services/%{trusted.extensions.pp_service}/%{trusted.extensions.pp_role}.eyaml"
+          - "data/services/%{trusted.extensions.pp_service}/common.eyaml"
+
+    - name: "Common data (yaml version)"
+      paths:
+          - "data/common.yaml" # Anything in data/common.yaml would get applied to ALL nodes. I've never found a particulaly compelling use for this.
+
+    - name: "Common secrets (eyaml)"
+      lookup_key: eyaml_lookup_key
+      options:
+          pkcs7_private_key: /etc/puppetlabs/puppet/keys/private_key.pkcs7.pem
+          pkcs7_public_key:  /etc/puppetlabs/puppet/keys/public_key.pkcs7.pem
+      paths:
+          - "data/common.eyaml" # Same as above, except being eyaml it accepts encrypted data. If you have an admin user you want to be present on all nodes you could declare that here for example.

@@ -1,0 +1,16 @@
+# This should take affect after the bootstrap and should contain any values relevant to ALL puppet servers.
+classes: 
+    - puppetserver
+    - puppetserver::puppetboard # Optional - remove this if you don't want it in your environment
+lookup_options:
+    # Tell hiera to merge puppet::dns_alt_names, (btw we can't do this in our puppetserver/data folder as puppet:: is in the wrong namespace i.e. not puppetserver)
+    # so that we can override values from puppet::dns_alt_names without duplicating all of them.
+    # (https://puppet.com/docs/puppet/latest/hiera_merging.html#defining-merge-behavior-with-lookup-options)
+    puppet::dns_alt_names:
+    merge:
+        strategy: deep
+# The below uses the foreman puppet module to set DNS alt names
+puppet::dns_alt_names:
+    - "%{::hostname}"
+puppetserver::puppetboard::puppetboard_dir: "/srv/puppetboard-docker"
+puppetserver::puppetboard::: 'v3.2.0'

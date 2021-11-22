@@ -1,0 +1,2 @@
+---
+puppetserver::puppet_majorversion: 7
