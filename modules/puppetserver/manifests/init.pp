@@ -126,6 +126,7 @@ class puppetserver
   class { '::puppet':
     # install puppet server
     server                      => true,
+    server_http                 => true,
     # The version of the puppet-agent package.
     version                     => $puppet_agent_package_version,
     # the version of the puppetserver package.
