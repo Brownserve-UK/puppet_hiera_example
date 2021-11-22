@@ -78,6 +78,9 @@ class puppetserver
     fail("Unsupported Puppet version: ${puppet_majorversion}.")
   }
 
+  # On bootstrap installations puppetdb will fail to start, this is because the ssl keys are not generated during a 'puppet apply'
+  # they are only created on 'puppet agent -t' or 'puppet ssl bootstrap'
+  # Therefore we need a way to _not_ set-up PuppetDB until after we first run Puppet
   if ($install_puppetdb)
   {
     # Install and configure PuppetDB
