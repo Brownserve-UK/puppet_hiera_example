@@ -83,6 +83,7 @@ class puppetserver
       '-Xms' => '1g',
     },
     postgres_version => $postgres_version,
+    cipher_suites    => $puppet::server_cipher_suites.join(',')
   }
 
   if $::trusted['extensions']['pp_environment'] == 'live' {
@@ -163,8 +164,6 @@ class puppetserver
     require                     => [Class['puppetdb']],
   }
 
-  # Set the puppetdb cipher suites
-  class { '::puppetdb': cipher_suites => $puppet::server_cipher_suites.join(',') }
   # Will manage puppetdb.conf for us
   class { 'puppet::server::puppetdb':
     server => $puppet_dbserver,
