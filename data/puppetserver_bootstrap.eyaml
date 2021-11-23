@@ -4,7 +4,7 @@
 # On the production branch these should be set to the stable things for bootstrapping a new Puppet server in a pinch, for a testing branch these can be set to whatever you want.
 classes: 
   - puppetserver
-puppetserver::puppet_majorversion: 7
+puppetserver::puppet_majorversion: 6
 puppetserver::puppet_environment: 'dev'
 # Don't install PuppetDB on the bootstrap environment as the certificates won't exist until we run a puppet agent -t
 puppetserver::install_puppetdb: false
