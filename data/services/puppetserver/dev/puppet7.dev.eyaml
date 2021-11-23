@@ -1,6 +1,4 @@
 ---
-classes:
-    - puppetserver::puppetboard # Optional - remove this if you don't want it in your environment
 puppet::dns_alt_names:
     - "%{::hostname}.local"
     - "puppetserver_dev"
@@ -8,9 +6,6 @@ puppet::dns_alt_names:
 
 # Ensure this node always runs in the "dev" environment
 puppetserver::puppet_environment: 'dev'
-# You can find the version here: https://github.com/voxpupuli/puppetboard
-puppetserver::puppetboard::puppetboard_version: 'v3.2.0'
-puppetserver::puppetboard::puppetboard_dir: '/srv/puppetboard-docker'
 
 # This seems to be needed at present to stop Puppet reporting changes on each run :(
 postgresql::server::contrib::package_name: postgresql-contrib
