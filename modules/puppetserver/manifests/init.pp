@@ -41,13 +41,6 @@ class puppetserver
       shell  => '/usr/sbin/nologin',
     }
 
-  if(!lookup('postgresql::server::contrib::package_name')) {
-    # Setting this hiera value is the only way we can override the postgresql-contrib
-    # package name without causing puppet dependency cycles between the puppetdb and postgresql modules
-    # 🤷‍♂️
-    fail('postgresql::server::contrib::package_name needs to be set as "postgresql-contrib" for our puppet run to be idempotent')
-  }
-
   # We're very specific about what values we set to both avoid automatically breaking things and to give us a stable
   # bootstrap environment.
   case $puppet_majorversion
@@ -123,6 +116,12 @@ class puppetserver
   # Therefore we need a way to _not_ set-up PuppetDB until after we first run Puppet
   if ($install_puppetdb)
   {
+    if(!lookup('postgresql::server::contrib::package_name')) {
+      # Setting this hiera value is the only way we can override the postgresql-contrib
+      # package name without causing puppet dependency cycles between the puppetdb and postgresql modules
+      # 🤷‍♂️
+      fail('postgresql::server::contrib::package_name needs to be set as "postgresql-contrib" for our puppet run to be idempotent')
+    }
     # Install and configure PuppetDB
     class { 'puppetdb::globals':
       version => $puppetdb_package_version,
