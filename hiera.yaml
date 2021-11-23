@@ -1,39 +1,37 @@
 ---
-# Example hiera configuration.
-version: 5
+# This file contains the configuration information for production Hiera.
+version: 5 # The version of Hiera to use
 
 defaults:
   datadir: .
   data_hash: yaml_data
 
+# The below instructs Hiera in what order to look up data and from what sources
+# see https://puppet.com/docs/hiera/3.3/lookup_types.html#native-merging for more information
 hierarchy:
-
+    # First start with eyaml (encrypted YAML), this makes sure we've get secure stuff first and foremost 
     - name: "Per-node secrets (eyaml)"
-      lookup_key: eyaml_lookup_key # eyaml backend
-      # The location of your puppet masters eyaml keys
+      lookup_key: eyaml_lookup_key # Tells Hiera to use eyaml
+      # The location of your puppet masters eyaml keys on your Puppet server
       options:
           pkcs7_private_key: /etc/puppetlabs/puppet/keys/private_key.pkcs7.pem 
           pkcs7_public_key:  /etc/puppetlabs/puppet/keys/public_key.pkcs7.pem
       paths:
           - "data/%{trusted.certname}.eyaml"
-
-          # As per hiera merging this order is correct as the higher stuff on the list overwrites the lower if keys share the same name:
-          # https://puppet.com/docs/hiera/3.3/lookup_types.html#native-merging
           - "data/services/%{trusted.extensions.pp_service}/%{trusted.extensions.pp_environment}/%{trusted.extensions.pp_role}/%{trusted.certname}.eyaml"
           - "data/services/%{trusted.extensions.pp_service}/%{trusted.extensions.pp_environment}/%{trusted.certname}.eyaml"
           - "data/services/%{trusted.extensions.pp_service}/%{trusted.extensions.pp_environment}/%{trusted.extensions.pp_role}.eyaml"
           - "data/services/%{trusted.extensions.pp_service}/%{trusted.extensions.pp_environment}/common.eyaml"
           - "data/services/%{trusted.extensions.pp_service}/%{trusted.extensions.pp_role}.eyaml"
           - "data/services/%{trusted.extensions.pp_service}/common.eyaml"
-
+    # Next look up any common data that applies to ALL nodes (both encrypted and unencrypted)
     - name: "Common data (yaml version)"
       paths:
-          - "data/common.yaml" # Anything in data/common.yaml would get applied to ALL nodes. I've never found a particulaly compelling use for this.
-
+          - "data/common.yaml"
     - name: "Common secrets (eyaml)"
       lookup_key: eyaml_lookup_key
       options:
           pkcs7_private_key: /etc/puppetlabs/puppet/keys/private_key.pkcs7.pem
           pkcs7_public_key:  /etc/puppetlabs/puppet/keys/public_key.pkcs7.pem
       paths:
-          - "data/common.eyaml" # Same as above, except being eyaml it accepts encrypted data. If you have an admin user you want to be present on all nodes you could declare that here for example.
+          - "data/common.eyaml"
