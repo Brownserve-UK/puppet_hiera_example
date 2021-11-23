@@ -43,9 +43,9 @@ class puppetserver::puppetboard
     env              => [
       "PUPPETDB_HOST=${::fqdn}",
       'PUPPETDB_PORT=8081',
-      'PUPPETDB_SSL_VERIFY=/etc/puppetlabs/puppetdb/ssl/ca.pem',
-      'PUPPETDB_KEY=/etc/puppetlabs/puppetdb/ssl/private.pem',
-      'PUPPETDB_CERT=/etc/puppetlabs/puppetdb/ssl/public.pem',
+      'PUPPETDB_SSL_VERIFY=/ssl/certs/ca.pem',
+      "PUPPETDB_KEY=/ssl/private_keys/${::clientcert}.pem",
+      "PUPPETDB_CERT=/ssl/certs/${::clientcert}.pem",
       #'PUPPETBOARD_URL_PREFIX=puppetboard', # you may wish to uncomment this if you'd like to have a prefix for your Puppetboard
       'ENABLE_CATALOG=True',
       'UNRESPONSIVE_HOURS=24',
