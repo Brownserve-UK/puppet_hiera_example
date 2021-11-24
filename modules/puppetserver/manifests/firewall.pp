@@ -1,7 +1,11 @@
 # Class: puppetserver::firewall
 #
 # Configures the iptables firewall on the puppet server to allow expected services.
-class puppetserver::firewall {
+class puppetserver::firewall
+(
+  Boolean $enable_puppetdb_http = false
+)
+{
 
   Firewall {
     require => undef,
@@ -56,5 +60,12 @@ class puppetserver::firewall {
     proto  => 'all',
     action => 'drop',
     before => undef,
+  }
+  if ($enable_puppetdb_http) {
+    firewall { '008.5 allow 8080 (PuppetDB HTTP)':
+        proto  => 'tcp',
+        dport  => 8080,
+        action => accept,
+    }
   }
 }

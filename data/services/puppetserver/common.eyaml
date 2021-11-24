@@ -11,3 +11,6 @@ lookup_options:
 # The below uses the foreman puppet module to set DNS alt names
 puppet::dns_alt_names:
     - "%{::hostname}"
+
+# Probably wise to NOT do this in a real production environment, but this saves messing with certs when testing
+puppetserver::firewall::enable_puppetdb_http: true
