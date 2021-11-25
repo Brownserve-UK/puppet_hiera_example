@@ -15,3 +15,5 @@ puppetserver::firewall::enable_puppetdb_http: true
 puppetserver::autosign_entries:
     - "*.local"
     - "*.dev"
+
+common::manage_puppet: false
