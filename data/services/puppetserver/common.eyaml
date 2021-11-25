@@ -2,6 +2,7 @@
 classes: 
     - puppetserver
 
+# In case we use Puppet agent to bring up another Puppetserver we'll set the alt names here too
 puppetserver::dns_alt_names:
     - "%{::hostname}"
     - "puppetserver"
