@@ -6,7 +6,7 @@
 # @param puppet_agent_options
 #   a Hash of options that will be set in the puppet config file
 class common::puppet_agent(
-  $package_ensure,
+  $package_ensure = 'present',
   $puppet_agent_options = {},
   ) {
 
