@@ -5,6 +5,7 @@
 common::users:
   'joe.bloggs':
     ensure: present
+    # eyaml encrypted password for testing - should be MyPassword1234
     password: >
       ENC[PKCS7,MIIBeQYJKoZIhvcNAQcDoIIBajCCAWYCAQAxggEhMIIBHQIBADAFMAACAQEw
       DQYJKoZIhvcNAQEBBQAEggEAlJMz8qFO1QnNgUVgPVdj+Cu+Qd035p5kObn6
