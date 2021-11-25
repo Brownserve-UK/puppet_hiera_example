@@ -11,3 +11,6 @@ puppetserver::dns_alt_names:
 # Probably wise to NOT do this in a real production environment, but this saves messing with certs when testing
 puppetserver::puppetdb_http_interface: "0.0.0.0"
 puppetserver::firewall::enable_puppetdb_http: true
+puppetserver::autosign_entries:
+    - "puppetagent-*.local"
+    - "puppetagent-*.dev"

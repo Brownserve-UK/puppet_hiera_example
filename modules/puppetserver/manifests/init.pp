@@ -20,6 +20,8 @@
 #   The interface to listen on for HTTP (defaults to localhost as HTTP isn't so secure...)
 # @param dns_alt_names
 #   The list of alternate names to use for the Puppet server certificate
+# @param autosign_entries
+#   The list of certificates to automatically sign (see https://puppet.com/docs/puppet/6/config_file_autosign.html)
 class puppetserver
 (
   $puppet_majorversion,
@@ -31,6 +33,7 @@ class puppetserver
   $puppet_dbserver = $::fqdn,
   $puppetdb_http_interface = 'localhost',
   Optional[Array] $dns_alt_names = undef,
+  Optional[Array] $autosign_entries = undef,
 )
 {
   include puppetserver::codemanagement
@@ -218,6 +221,8 @@ class puppetserver
     hiera_config                => $hiera_yaml_path,
     # Any alt names to use for the puppet server certificate
     dns_alt_names               => $dns_alt_names,
+    # Any certificates that should be auto signed
+    autosign_entries            => $autosign_entries,
 
     # Manage additional puppet.conf settings:
     # [main] section
