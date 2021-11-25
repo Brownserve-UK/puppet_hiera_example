@@ -16,6 +16,8 @@
 #   The hostname of the PuppetDB server (defaults to this node)
 # @param install_puppetdb
 #   Whether to install PuppetDB (defaults to true)
+# @param puppetdb_http_interface
+#   The interface to listen on for HTTP (defaults to localhost as HTTP isn't so secure...)
 class puppetserver
 (
   $puppet_majorversion,
@@ -25,6 +27,7 @@ class puppetserver
   $hiera_yaml_path = "${::settings::codedir}/hiera.yaml",
   Boolean $install_puppetdb = true,
   $puppet_dbserver = $::fqdn,
+  $puppetdb_http_interface = 'localhost',
 )
 {
   include puppetserver::codemanagement
@@ -142,6 +145,7 @@ class puppetserver
       ssl_deploy_certs   => true,
       ssl_dir            => '/etc/puppetlabs/puppetdb/ssl',
       ssl_set_cert_paths => true,
+      listen_address     => $puppetdb_http_interface,
     }
     $puppet_require = [Class['puppetdb']]
     $server_reports = 'puppetdb'
