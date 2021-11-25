@@ -9,9 +9,6 @@ class common::users
 {
   if !($::osfamily == 'windows')
   {
-    package { 'sudo':
-      ensure => present
-    }
     group { 'group_wheel':
       ensure => present,
       name   => 'wheel',
