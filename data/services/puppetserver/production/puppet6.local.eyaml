@@ -1,10 +1,7 @@
 ---
 classes:
     - puppetserver::puppetboard # Optional - remove this if you don't want it in your environment
-puppetserver::dns_alt_names:
-    - "%{::hostname}.local"
-    - "puppetserver"
-    - "puppetserver.local"
+
 puppetserver::puppet_environment: 'production'
 # You can find the version here: https://github.com/voxpupuli/puppetboard
 puppetserver::puppetboard::puppetboard_version: 'v3.2.0'

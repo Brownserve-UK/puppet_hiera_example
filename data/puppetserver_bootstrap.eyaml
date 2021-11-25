@@ -6,5 +6,13 @@ classes:
   - puppetserver
 puppetserver::puppet_majorversion: 6
 puppetserver::puppet_environment: 'production'
+
+# Set the alt names that Puppet can respond to, this is important to do as part of the bootstrapping process as it can only be
+# done during the initial CA set-up on the Puppetserver
+puppetserver::dns_alt_names:
+    - "%{::hostname}"
+    - "puppetserver"
+    - "puppetserver.%{::domain}"
+
 # Don't install PuppetDB on the bootstrap environment as the certificates won't exist until we run a puppet agent -t
 puppetserver::install_puppetdb: false

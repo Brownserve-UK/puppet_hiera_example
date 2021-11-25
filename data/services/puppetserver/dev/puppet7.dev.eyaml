@@ -1,10 +1,6 @@
 ---
 classes:
     - puppetserver::puppetboard # Note - when accessing the Puppetboard in the 'dev' environment you'll need to add /dev/ on the end of the URL
-puppet::dns_alt_names:
-    - "%{::hostname}.local"
-    - "puppetserver_dev"
-    - "puppetserver_dev.local"
 
 # Ensure this node always runs in the "dev" environment
 puppetserver::puppet_environment: 'dev'
