@@ -1,4 +1,4 @@
-# Class: common::standard_users
+# Class: common::users
 # Creates users on Linux/Windows manchines.
 #
 #

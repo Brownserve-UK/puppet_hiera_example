@@ -13,7 +13,7 @@ class common
   # Create our standard local users (except on nodes where we don't want to)
   if $manage_users
   {
-      contain common::standard_users
+      contain common::users
   }
   if ($::osfamily == 'windows')
   {
