@@ -18,6 +18,8 @@
 #   Whether to install PuppetDB (defaults to true)
 # @param puppetdb_http_interface
 #   The interface to listen on for HTTP (defaults to localhost as HTTP isn't so secure...)
+# @param dns_alt_names
+#   The list of alternate names to use for the Puppet server certificate
 class puppetserver
 (
   $puppet_majorversion,
@@ -28,6 +30,7 @@ class puppetserver
   Boolean $install_puppetdb = true,
   $puppet_dbserver = $::fqdn,
   $puppetdb_http_interface = 'localhost',
+  Optional[Array] $dns_alt_names = undef,
 )
 {
   include puppetserver::codemanagement
@@ -213,6 +216,8 @@ class puppetserver
     # The ::puppet class defaults hiera_config to the wrong value for puppet > 4.5
     # At the time of writing, puppet version is 4.5.3. Hardcode hiera_config here.
     hiera_config                => $hiera_yaml_path,
+    # Any alt names to use for the puppet server certificate
+    dns_alt_names               => $dns_alt_names,
 
     # Manage additional puppet.conf settings:
     # [main] section

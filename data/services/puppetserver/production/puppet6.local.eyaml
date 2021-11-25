@@ -1,7 +1,7 @@
 ---
 classes:
     - puppetserver::puppetboard # Optional - remove this if you don't want it in your environment
-puppet::dns_alt_names:
+puppetserver::dns_alt_names:
     - "%{::hostname}.local"
     - "puppetserver"
     - "puppetserver.local"
