@@ -12,5 +12,5 @@ puppetserver::dns_alt_names:
 puppetserver::puppetdb_http_interface: "0.0.0.0"
 puppetserver::firewall::enable_puppetdb_http: true
 puppetserver::autosign_entries:
-    - "puppetagent-*.local"
-    - "puppetagent-*.dev"
+    - "*.local"
+    - "*.dev"
