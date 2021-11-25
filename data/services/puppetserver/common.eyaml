@@ -1,6 +1,7 @@
 # This should take affect after the bootstrap and should contain any values relevant to ALL puppet servers.
 classes: 
     - puppetserver
+    - common
 
 # In case we use Puppet agent to bring up another Puppetserver we'll set the alt names here too
 puppetserver::dns_alt_names:
