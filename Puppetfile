@@ -8,6 +8,7 @@ mod 'puppetlabs-firewall', '3.2.0'
 mod 'puppetlabs-puppetdb', '7.9.0'
 mod 'puppet-hiera', '4.0.0'
 mod 'theforeman-puppet', '15.2.0'
+mod 'puppetlabs-accounts', '7.1.1'
 
 # Dependencies of dependencies
 mod 'puppetlabs-stdlib', '8.1.0'
