@@ -15,19 +15,3 @@ puppetserver::firewall::enable_puppetdb_http: true
 puppetserver::autosign_entries:
     - "*.local"
     - "*.dev"
-
-common::users:
-  'joe.bloggs':
-    ensure: present
-    # eyaml encrypted password for testing - should be MyPassword1234
-    password: >
-      ENC[PKCS7,MIIBeQYJKoZIhvcNAQcDoIIBajCCAWYCAQAxggEhMIIBHQIBADAFMAACAQEw
-      DQYJKoZIhvcNAQEBBQAEggEAlJMz8qFO1QnNgUVgPVdj+Cu+Qd035p5kObn6
-      7oenGyremne0BZwC3p0pRv1jESx0DSAB10sfvM2T2KooM2dLMleEY38VNIj6
-      dDxQWPKfIBf1tQbwF3Wa/Y6XofyOnm3x4opq2Cl3Y+LJl8Ir4zPqOFwGH245
-      C8xuuJJTxKM/Ip8jUL0U8OJZ3hbVQ0IuVd0YHy8VkustOqSnWJ3mZPzIOzx9
-      siT3VnuOdxTMEjfhEIKdzqA81/k1LD5zZ9018lJe4/liriSxW68W5VjUjXFN
-      5BvfNlKV764Vov0DN20AX3/4DH51zTYwA5zUM50hx3sFUwQu3qlXay2WHso1
-      jXTZWDA8BgkqhkiG9w0BBwEwHQYJYIZIAWUDBAEqBBD/+ciiqIzaB3Gb+/HC
-      PfBMgBDZmKu4VCFdQFQWt/sKQmte]
-    administrator: true
