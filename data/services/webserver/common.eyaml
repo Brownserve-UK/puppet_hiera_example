@@ -1,2 +1,19 @@
 ---
 # Configuration for all web servers would live here
+
+# Let's say web servers need extra users
+common::users::users:
+  'jane.doe':
+    ensure: present
+    # eyaml encrypted password for testing - should be Password1234
+    password: >
+      ENC[PKCS7,MIIBeQYJKoZIhvcNAQcDoIIBajCCAWYCAQAxggEhMIIBHQIBADAFMAACAQEw
+      DQYJKoZIhvcNAQEBBQAEggEAJTMkAd0XGJ9e9/ee2PQobmRFT+rwMUncTZkM
+      YqayYjMU6uN8xbA+08PS2LDYvXt2ri0EtT3+MdwpslIVEpLGz3EkBxjhK/fR
+      cHvhzL5xek36+Q/PtVHkc5slLH/hrgEsIp3ZTC0XisOQqjHR41y2hPabeVT5
+      XJrh58sB/65kEbNuMM71jSeg/S/QZKr6oOgzgLeFT6Z66xeg016oMR7ONJVA
+      GT412DCyvD8prHBla4Cc23sbDqdt6GyWqXs0LURuuBaN0+eeAR4+8cuM1oj4
+      y2dm/YMdMjvaemG5fDH6WCOgRMQok5XEjDHjge2zzD5dpP+5uxECgP3qCSSe
+      VAjE6TA8BgkqhkiG9w0BBwEwHQYJYIZIAWUDBAEqBBDSbZ9asZnVSEVivp7D
+      LOFegBD7EFziAztRGGqQOKZp1RHr]
+    administrator: true

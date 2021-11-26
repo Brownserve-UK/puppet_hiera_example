@@ -1,2 +1,7 @@
 ---
 # Applies to all nodes
+# Tell hiera to merge users so we can define then at multiple levels
+lookup_options:
+  common::users::users:
+    merge:
+      strategy: deep
