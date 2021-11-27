@@ -1,9 +1,13 @@
 ---
 # Applies to all nodes, values are NOT encrypted
 
-# Tell hiera to deep merge users so we can define then at multiple levels
 lookup_options:
+  # Tell hiera to deep merge users so we can define then at multiple levels
   common::users::users:
+    merge:
+      strategy: deep
+  # Same for Puppet agent options
+  common::puppet_agent::puppet_agent_options:
     merge:
       strategy: deep
 
