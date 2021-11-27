@@ -1,2 +1,7 @@
 ---
 # Common config that would apply to all file servers
+
+# Perhaps file servers need more time between runs so as not to use all the resources?
+common::puppet_agent::puppet_agent_options:
+# Try setting a longer run time
+  runinterval: 3600
