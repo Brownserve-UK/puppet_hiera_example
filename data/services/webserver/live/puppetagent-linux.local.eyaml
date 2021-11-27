@@ -5,4 +5,4 @@ classes:
 
 common::puppet_agent::puppet_agent_options:
 # Try setting a longer run time
-  runinterval: 1800
+  runinterval: '1800'

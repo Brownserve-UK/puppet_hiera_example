@@ -19,4 +19,4 @@ common::puppet_agent::puppet_agent_options:
   # https://puppet.com/docs/puppet/6.5/configuration.html#splay
   splay: true
   # Set Puppet to run every 1000 seconds when the service is enabled
-  runinterval: 1000
+  runinterval: '1000'
