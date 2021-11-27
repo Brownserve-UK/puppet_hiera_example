@@ -6,10 +6,10 @@ lookup_options:
   common::users::users:
     merge:
       strategy: deep
-  # # Same for Puppet agent options
-  # common::puppet_agent::puppet_agent_options:
-  #   merge:
-  #     strategy: deep
+  # Same for Puppet agent options
+  common::puppet_agent::puppet_agent_options:
+    merge:
+      strategy: deep
 
 common::puppet_agent::puppet_agent_options:
   # Disable using cache on catalog compile failure
