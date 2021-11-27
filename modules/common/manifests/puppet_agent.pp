@@ -26,14 +26,14 @@ class common::puppet_agent(
   }
 
   $puppet_agent_options.each | $option_name, $option_value| {
-    ini_setting { "puppet.conf-${option_name}":
-      ensure  => present,
-      path    => $::puppet_config,
-      section => 'agent',
-      setting => $option_name,
-      value   => $option_value,
-      notify  => Service['puppet'],
-    }
+    # ini_setting { "puppet.conf-${option_name}":
+    #   ensure  => present,
+    #   path    => $::puppet_config,
+    #   section => 'agent',
+    #   setting => $option_name,
+    #   value   => $option_value,
+    #   notify  => Service['puppet'],
+    # }
   }
 
   service {'puppet':
