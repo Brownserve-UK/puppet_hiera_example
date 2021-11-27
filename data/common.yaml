@@ -12,11 +12,6 @@ lookup_options:
   #     strategy: deep
 
 common::puppet_agent::puppet_agent_options:
-  # Disable using cache on catalog compile failure
-  # in the hope that we're more likely to detect and fix such failure quickly
   usecacheonfailure: 'false'
-  # Set splay options to randomise the time puppet agent runs start
-  # https://puppet.com/docs/puppet/6.5/configuration.html#splay
   splay: 'true'
-  # Set Puppet to run every 1000 seconds when the service is enabled
   runinterval: 1000
