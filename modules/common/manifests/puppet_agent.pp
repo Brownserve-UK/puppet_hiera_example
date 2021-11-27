@@ -34,6 +34,8 @@ class common::puppet_agent(
     #   value   => $option_value,
     #   notify  => Service['puppet'],
     # }
+    notify { "puppet.conf-${option_name}":
+    }
   }
 
   service {'puppet':
