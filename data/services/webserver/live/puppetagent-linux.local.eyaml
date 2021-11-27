@@ -3,6 +3,6 @@
 classes:
   - common
 
-# common::puppet_agent::puppet_agent_options:
-# # Try setting a longer run time
-#   runinterval: '1800'
+common::puppet_agent::puppet_agent_options:
+# Try setting a longer run time
+  runinterval: '1800'

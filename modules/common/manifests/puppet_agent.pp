@@ -7,7 +7,7 @@
 #   a Hash of options that will be set in the puppet config file
 class common::puppet_agent(
   $package_ensure = 'present',
-  $puppet_agent_options = {'splay' => true},
+  $puppet_agent_options = {},
   ) {
 
   # We need to do this as this module can be called before we've got chocolatey installed :(
@@ -26,15 +26,13 @@ class common::puppet_agent(
   }
 
   $puppet_agent_options.each | String $option_name, $option_value| {
-    # ini_setting { "puppet.conf-${option_name}":
-    #   ensure  => present,
-    #   path    => $::puppet_config,
-    #   section => 'agent',
-    #   setting => $option_name,
-    #   value   => $option_value,
-    #   notify  => Service['puppet'],
-    # }
-    notify { "puppet.conf-${option_name}":
+    ini_setting { "puppet.conf-${option_name}":
+      ensure  => present,
+      path    => $::puppet_config,
+      section => 'agent',
+      setting => $option_name,
+      value   => $option_value,
+      notify  => Service['puppet'],
     }
   }
 
