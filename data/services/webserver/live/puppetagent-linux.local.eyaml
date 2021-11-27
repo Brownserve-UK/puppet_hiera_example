@@ -2,3 +2,7 @@
 # This where your config could go for a web server, for now we'll just include common
 classes:
   - common
+
+common::puppet_agent::puppet_agent_options:
+# Try setting a longer run time
+  runinterval: 1800
