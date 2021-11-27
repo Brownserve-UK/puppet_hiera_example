@@ -25,7 +25,7 @@ class common::puppet_agent(
     provider => $provider
   }
 
-  $puppet_agent_options.each |String $option_name, $option_value| {
+  $puppet_agent_options.each | $option_name, $option_value| {
     ini_setting { "puppet.conf-${option_name}":
       ensure  => present,
       path    => $::puppet_config,
