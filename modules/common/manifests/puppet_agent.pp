@@ -7,7 +7,7 @@
 #   a Hash of options that will be set in the puppet config file
 class common::puppet_agent(
   $package_ensure = 'present',
-  $puppet_agent_options = {splay => true},
+  $puppet_agent_options = {'splay' => true},
   ) {
 
   # We need to do this as this module can be called before we've got chocolatey installed :(
