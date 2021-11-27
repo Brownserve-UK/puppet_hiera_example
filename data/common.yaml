@@ -1,5 +1,5 @@
 ---
-# Applies to all nodes
+# Applies to all nodes, values are not encrypted
 # Tell hiera to merge users so we can define then at multiple levels
 lookup_options:
   common::users::users:

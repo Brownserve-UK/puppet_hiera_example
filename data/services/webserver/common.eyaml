@@ -1,7 +1,8 @@
 ---
 # Configuration for all web servers would live here
 
-# Let's say web servers need extra users
+# Let's say web servers need extra users, perhaps we have a web team that needs access to the web servers - we can define those here
+# and they would be merged with the users from data/common.eyaml
 common::users::users:
   'jane.doe':
     ensure: present

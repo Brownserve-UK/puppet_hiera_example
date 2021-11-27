@@ -1,4 +1,4 @@
 ---
-# This where your config could go for a web server
+# This where your config could go for a web server, for now we'll just include common
 classes:
   - common
