@@ -12,6 +12,7 @@ mod 'puppetlabs-accounts', '7.1.1'
 mod 'saz-sudo', '7.0.2'
 mod 'puppet-unattended_upgrades', '6.0.0'
 mod 'puppetlabs-puppet_agent', '4.9.0'
+mod 'puppetlabs-chocolatey', '6.0.1'
 
 # Dependencies of dependencies
 mod 'puppetlabs-stdlib', '8.1.0'
@@ -27,3 +28,4 @@ mod 'puppetlabs-powershell', '5.0.0'
 mod 'puppetlabs-pwshlib', '0.10.1'
 mod 'puppetlabs-reboot', '4.1.0'
 mod 'puppetlabs-facts', '1.4.0'
+mod 'puppetlabs-registry', '4.0.1'
