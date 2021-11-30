@@ -4,8 +4,8 @@
 # On the production branch these should be set to the stable things for bootstrapping a new Puppet server in a pinch, for a testing branch these can be set to whatever you want.
 classes: 
   - puppetserver
-puppetserver::puppet_majorversion: 6
-puppetserver::puppet_environment: 'production'
+puppetserver::puppet_majorversion: 7
+puppetserver::puppet_environment: 'dev'
 
 # Set the alt names that Puppet can respond to, this is important to do as part of the bootstrapping process as it can only be
 # done during the initial CA set-up on the Puppetserver
