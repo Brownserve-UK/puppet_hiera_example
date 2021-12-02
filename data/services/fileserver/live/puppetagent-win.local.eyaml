@@ -1,4 +1,4 @@
 ---
-# Example of where a Windows file server could live, for now we'll just declare common
+# Example of where a Windows live file server could live, for now we'll just declare common
 classes:
   - common

@@ -1,0 +1,4 @@
+---
+# Example of where a Windows dev file server could live, for now we'll just declare common
+classes:
+  - common
