@@ -1,0 +1,9 @@
+# Ignore the eyaml pkcs7_private_key.pem file to avoid accidentally committing it
+keys/private_key.pkcs7.pem
+
+# Allow the .bundle/config file to be committed but ignore the directory itself
+!.bundle/config
+.bundle/**/*
+
+# Ignore gemfile.lock as it's not really needed for this project
+Gemfile.lock
