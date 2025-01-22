@@ -1,13 +1,18 @@
 # @summary Installs and configures Puppetserver on a node
-# 
+#
 # @param puppet_majorversion
 #   The major version of Puppet to install
-# @param puppet_environment
-#   The environment to be set for this node in puppet.conf
+# @param puppet_agent_environment
+#   The environment to be set for this node under the [agent] section in puppet.conf
+#   By default theforeman/puppet will set this to the environment used in the last successful puppet run
+#   In production we typically specify this as 'production' in hiera to ensure that we are always applying
+#   production code.
 # @param puppet_user
 #   The user to run Puppet as (defaults to puppet)
 # @param puppet_group
 #   The group to run Puppet as (defaults to puppet)
+# @param manage_agent_service
+#   Whether to have theforeman/puppet module manage the puppet agent service (defaults to true)
 # @param hiera_yaml_path
 #   Used by both ::hiera and ::puppet class because they both try
 #   to manage the hiera_config setting in puppet.conf
@@ -22,109 +27,131 @@
 #   The list of alternate names to use for the Puppet server certificate
 # @param autosign_entries
 #   The list of certificates to automatically sign (see https://puppet.com/docs/puppet/6/config_file_autosign.html)
-class puppetserver
-(
-  $puppet_majorversion,
-  $puppet_environment,
-  $puppet_user = 'puppet',
-  $puppet_group = 'puppet',
-  $hiera_yaml_path = "${::settings::codedir}/hiera.yaml",
+class puppetserver (
+  Integer $puppet_majorversion,
+  Optional[String] $puppet_agent_environment = undef,
+  String $puppet_user = 'puppet',
+  String $puppet_group = 'puppet',
+  Boolean $manage_agent_service = true,
+  Stdlib::Unixpath $hiera_yaml_path = "${settings::codedir}/hiera.yaml",
   Boolean $install_puppetdb = true,
-  $puppet_dbserver = $::fqdn,
-  $puppetdb_http_interface = 'localhost',
+  String $puppet_dbserver = $facts['networking']['fqdn'],
+  String $puppetdb_http_interface = 'localhost',
   Optional[Array] $dns_alt_names = undef,
   Optional[Array] $autosign_entries = undef,
-)
-{
+) {
   include puppetserver::codemanagement
   include puppetserver::firewall
-  include common::ntpclient
+  include common::linux::ntpclient
 
   # Ensure the 'puppet' user and group are present
   group { $puppet_group:
     ensure => present,
   }
   -> user { $puppet_user:
-      ensure => present,
-      groups => $puppet_group,
-      shell  => '/usr/sbin/nologin',
-    }
+    ensure => present,
+    groups => $puppet_group,
+    shell  => '/usr/sbin/nologin',
+  }
+
+  if ($manage_agent_service == false) {
+    $runmode = 'unmanaged'
+  } else {
+    $runmode = 'service'
+  }
 
   # We're very specific about what values we set to both avoid automatically breaking things and to give us a stable
   # bootstrap environment.
-  case $puppet_majorversion
-  {
+  case $puppet_majorversion {
     7:
-    {
-      # Versions can be found here https://puppet.com/docs/puppet/7/server/release_notes.html
-      $puppetserver_version = '7.4.2'
-      $puppetserver_package_version = "7.4.2-1${::lsbdistcodename}"
-      # Versions can be found here https://puppet.com/docs/puppetdb/7/release_notes.html
-      $puppetdb_package_version = "7.7.1-1${::lsbdistcodename}"
-      # Minium of 11, supported versions can be found at https://puppet.com/docs/puppetdb/7/overview.html
-      $postgres_version = '12'
-      # Do not let puppet upgrade to the latest version of puppet-agent.
-      # That's because for major upgrades, we are supposed to upgrade puppetserver
-      # before puppet-agent.
-      $puppet_agent_package_version = "7.12.1-1${::lsbdistcodename}"
-      # Hiera 5 is the current latest version of Hiera
-      $hiera_version = '5'
-      # with hiera v5, hierarchies should be defined in the environment and module layers
-      # hiera.yaml files which are committed with our puppet source code.
-      $hiera_hierarchies = []
-      # Versions can be found at https://github.com/voxpupuli/hiera-eyaml/tags
-      $eyaml_version = '3.2.2'
-      # Picked default cipher_suites values from https://github.com/theforeman/puppet-puppet/pull/721
-      $cipher_suites = [
-        'TLS_DHE_RSA_WITH_AES_128_GCM_SHA256',
-        'TLS_DHE_RSA_WITH_AES_256_GCM_SHA384',
-        'TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256',
-        'TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384',
-        'TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256',
-        'TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384',
-      ]
-    }
-    6:
-    {
+      {
+        # Versions can be found here https://puppet.com/docs/puppet/7/server/release_notes.html
+        $puppetserver_version = '7.17.1'
+        $puppetserver_package_version = "7.17.1-1${facts['os']['distro']['codename']}"
+        # Versions can be found here https://puppet.com/docs/puppetdb/7/release_notes.html
+        $puppetdb_package_version = "7.19.0-1${facts['os']['distro']['codename']}"
+        # Minium of 11, supported versions can be found at https://puppet.com/docs/puppetdb/7/overview.html
+        $postgres_version = '14'
+        # Do not let puppet upgrade to the latest version of puppet-agent.
+        # That's because for major upgrades, we are supposed to upgrade puppetserver
+        # before puppet-agent.
+        $puppet_agent_package_version = "7.31.0-1${facts['os']['distro']['codename']}"
+        # Hiera 5 is the current latest version of Hiera
+        $hiera_version = '5'
+        # with hiera v5, hierarchies should be defined in the environment and module layers
+        # hiera.yaml files which are committed with our puppet source code.
+        $hiera_hierarchies = []
+        # Versions can be found at https://github.com/voxpupuli/hiera-eyaml/tags
+        # Be careful with Ruby versions here - Puppetserver tends to be a bit behind (puppetserver ruby --version) and hiera-eyaml can require later versions than are available.
+        # (this may seem strange but it _is_ used outside of Puppet)
+        $eyaml_version = '3.4.0'
+        # Picked default cipher_suites values from https://github.com/theforeman/puppet-puppet/pull/721
+        $cipher_suites = [
+          'TLS_DHE_RSA_WITH_AES_128_GCM_SHA256',
+          'TLS_DHE_RSA_WITH_AES_256_GCM_SHA384',
+          'TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256',
+          'TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384',
+          'TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256',
+          'TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384',
+        ]
+
+        # Set the last_run_summary yaml file permissions so that icinga can read it
+        $additional_agent_settings = {
+          'lastrunfile' => '/opt/puppetlabs/puppet/public/last_run_summary.yaml { owner = root, group = root, mode = 0644 }',
+        }
+      }
+      6:
+      {
         # Check what versions are supported at https://puppet.com/docs/puppetdb/6/overview.html
-      $postgres_version = '12'
-      # Versions can be found at https://puppet.com/docs/puppet/6/server/release_notes.html
-      $puppetserver_version = '6.17.1'
-      $puppetserver_package_version = "6.17.1-1${::lsbdistcodename}"
-      # Versions can be found at https://puppet.com/docs/puppetdb/6/release_notes.html
-      $puppetdb_package_version = "6.19.1-1${::lsbdistcodename}"
-      # Do not let puppet upgrade to the latest version of puppet-agent.
-      # That's because for major upgrades, we are supposed to upgrade puppetserver
-      # before puppet-agent.
-      $puppet_agent_package_version = "6.25.1-1${::lsbdistcodename}"
-      # Hiera 5 is the current latest version of Hiera
-      $hiera_version = '5'
-      # with hiera v5, hierarchies should be defined in the environment and module layers
-      # hiera.yaml files which are committed with our puppet source code.
-      $hiera_hierarchies = []
-      # Versions can be found at https://github.com/voxpupuli/hiera-eyaml/tags
-      $eyaml_version = '3.2.2'
-      # Picked default cipher_suites values from https://github.com/theforeman/puppet-puppet/pull/721
-      $cipher_suites = [
-        'TLS_DHE_RSA_WITH_AES_128_GCM_SHA256',
-        'TLS_DHE_RSA_WITH_AES_256_GCM_SHA384',
-        'TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256',
-        'TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384',
-        'TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256',
-        'TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384',
-      ]
-    }
-    default:
-    {
-      fail("Unsupported Puppet version: ${puppet_majorversion}.")
-    }
-  }
+        $postgres_version = '12'
+        # Versions can be found at https://puppet.com/docs/puppet/6/server/release_notes.html
+        $puppetserver_version = '6.17.1'
+        $puppetserver_package_version = "6.17.1-1${facts['os']['distro']['codename']}"
+        # Versions can be found at https://puppet.com/docs/puppetdb/6/release_notes.html
+        $puppetdb_package_version = "6.19.1-1${facts['os']['distro']['codename']}"
+        # Do not let puppet upgrade to the latest version of puppet-agent.
+        # That's because for major upgrades, we are supposed to upgrade puppetserver
+        # before puppet-agent.
+        $puppet_agent_package_version = "6.25.1-1${facts['os']['distro']['codename']}"
+        # Hiera 5 is the current latest version of Hiera
+        $hiera_version = '5'
+        # with hiera v5, hierarchies should be defined in the environment and module layers
+        # hiera.yaml files which are committed with our puppet source code.
+        $hiera_hierarchies = []
+        # Versions can be found at https://github.com/voxpupuli/hiera-eyaml/tags
+        $eyaml_version = '3.2.2'
+        # Picked default cipher_suites values from https://github.com/theforeman/puppet-puppet/pull/721
+        $cipher_suites = [
+          'TLS_DHE_RSA_WITH_AES_128_GCM_SHA256',
+          'TLS_DHE_RSA_WITH_AES_256_GCM_SHA384',
+          'TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256',
+          'TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384',
+          'TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256',
+          'TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384',
+        ]
+
+        # to enable monitoring of Puppet runs we need to move the Puppet last run file to a location that the monitoring system can access
+        # This should happen by default on Puppet 7 but we need to do it manually for now on Puppet 6
+        # See https://puppet.atlassian.net/browse/PUP-10627
+        file { '/opt/puppetlabs/puppet/public':
+          ensure  => directory,
+          mode    => '0755',
+          require => Package['puppet-agent'],
+        }
+
+        $additional_agent_settings = {
+          'lastrunfile' => '/opt/puppetlabs/puppet/public/last_run_summary.yaml { owner = root, group = root, mode = 0644 }',
+        }
+      }
+      default:
+      {
+        fail("Unsupported Puppet version: ${puppet_majorversion}.")
+  } }
 
   # On bootstrap installations puppetdb will fail to start, this is because the ssl keys are not generated during a 'puppet apply'
   # they are only created on 'puppet agent -t' or 'puppet ssl bootstrap'
-  # Therefore we need a way to _not_ set-up PuppetDB until after we first run Puppet
-  if ($install_puppetdb)
-  {
+  # Therefore we need a way to not set-up PuppetDB until _after_ we first run Puppet
+  if ($install_puppetdb) {
     if(!lookup('postgresql::server::contrib::package_name')) {
       # Setting this hiera value is the only way we can override the postgresql-contrib
       # package name without causing puppet dependency cycles between the puppetdb and postgresql modules
@@ -157,8 +184,7 @@ class puppetserver
     $server_reports = 'puppetdb'
     $server_storeconfigs = true
   }
-  else
-  {
+  else {
     $puppet_require = undef
     $server_reports = undef
     $server_storeconfigs = undef
@@ -168,20 +194,19 @@ class puppetserver
     $puppet_tuning_parameters = {
       # Puppet server tuning. See https://puppet.com/docs/puppetserver/latest/tuning_guide.html
       # Set max active JRuby instances. (how many Puppet runs can happen at once)
-      # Generally this should equal CPU count, howerver as my env is small 1 is enough, 2 for safety
+      # Generally this should equal CPU count, however as my env is small 1 is enough, 2 for safety
       server_max_active_instances    => 2,
       # Set heap size. Recommendation is (512MB * max_active_instances) + 'a bit'.
-      # Therefor I have set mimimun to 1G and given a max of 2G.
-      # This is equivelent to setting JAVA_ARGS="-xms1g -xmx2g" in /etc/default/puppetserver
+      # Therefor I have set minimum to 1G and given a max of 2G.
+      # This is equivalent to setting JAVA_ARGS="-xms1g -xmx2g" in /etc/default/puppetserver
       server_jvm_min_heap_size       => '1G',
       server_jvm_max_heap_size       => '2G',
       # Set ReservedCodeCache to 1G (recommended when working with 6-12 JRuby instances)
-      # Not needed in my case, but could potentially be LOWERED in the future! 
+      # Not needed in my case, but could potentially be LOWERED in the future!
       # server_jvm_extra_args          => '-XX:ReservedCodeCacheSize=1G',
     }
   }
-  else
-  {
+  else {
     $puppet_tuning_parameters = {
       # When in a testing/dev environment we want to use less resources
       server_max_active_instances => 1,
@@ -192,19 +217,21 @@ class puppetserver
 
   # Install and configure puppet-agent, puppet-server and foreman
   # will manage Java Memory settings in /etc/default/puppetserver
-  class { '::puppet':
+  class { 'puppet':
     # install puppet server
     server                      => true,
     # The version of the puppet-agent package.
     version                     => $puppet_agent_package_version,
+    # Whether to manage the puppet agent service
+    runmode                     => $runmode,
     # the version of the puppetserver package.
     server_version              => $puppetserver_package_version,
     # used by foreman to setup the correct config options.
     server_puppetserver_version => $puppetserver_version,
     # ciphers used between puppetserver and puppetdb. They do need to match
     server_cipher_suites        => $cipher_suites,
-    # Which Puppet environment to use
-    environment                 => $puppet_environment,
+    # Which Puppet environment to use for the agent
+    environment                 => $puppet_agent_environment,
     # disable integration with foreman
     server_foreman              => false,
     # disable getting external nodes from foreman
@@ -231,9 +258,9 @@ class puppetserver
       # As run failure on our puppet board for all agents.
       # https://puppet.com/docs/puppet/latest/configuration.html#usecacheonfailure
       usecacheonfailure => false,
-      },
+    },
     # [agent] section
-    agent_additional_settings   => {},
+    agent_additional_settings   => $additional_agent_settings,
     # [master] section
     server_additional_settings  => {},
 
@@ -248,16 +275,15 @@ class puppetserver
     require                     => $puppet_require,
   }
 
-  if ($install_puppetdb)
-  {
+  if ($install_puppetdb) {
     # Will manage puppetdb.conf for us
     class { 'puppet::server::puppetdb':
       server  => $puppet_dbserver,
-      require => $puppet_require
+      require => $puppet_require,
     }
   }
 
-  class {'hiera':
+  class { 'hiera':
     hiera_yaml     => $hiera_yaml_path,
     hiera_version  => $hiera_version,
     hierarchy      => $hiera_hierarchies,
@@ -276,7 +302,7 @@ class puppetserver
 
   # Add a symlink to the eyaml binary to /opt/puppetlabs/bin/ which is already
   # included in the system PATH
-  file {'/opt/puppetlabs/bin/eyaml':
+  file { '/opt/puppetlabs/bin/eyaml':
     ensure  => link,
     target  => '/opt/puppetlabs/puppet/bin/eyaml',
     require => Class['hiera'],

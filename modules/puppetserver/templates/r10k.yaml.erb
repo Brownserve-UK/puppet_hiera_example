@@ -5,6 +5,11 @@
 :sources:
   # This will clone the git repository and instantiate an environment per
   # branch in /etc/puppetlabs/code/environments
-  :puppet_hiera_example:
-    remote: 'https://github.com/Brownserve-UK/puppet_hiera_example.git'
+<% @sources.each do |source| -%>
+  :<%= source['source_name'] %>:
+    remote: '<%= source['remote_path'] %>'
     basedir: '/etc/puppetlabs/code/environments'
+<% end -%>
+# Generate types afterwards so we can bypass this issue: https://tickets.puppetlabs.com/browse/MODULES-10808
+deploy:
+  generate_types: true

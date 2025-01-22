@@ -1,0 +1,6 @@
+---
+# The hiera file will apply to _any_ node that has their pp_service CSR extension set to "example_node"
+
+# If you have a class that you want to apply to a group of nodes this is a great place to include it.
+classes:
+  - example_module

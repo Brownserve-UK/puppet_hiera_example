@@ -1,0 +1,6 @@
+---
+# This file is an example of overriding settings for a single node.
+# Thi can be useful when you need to apply specific settings for individual nodes.
+
+# This shows an example of overriding a parameter using node specific hiera
+example_module::params::file_content: 'Hello, world! My text was overridden by node specific hiera. Neat!'

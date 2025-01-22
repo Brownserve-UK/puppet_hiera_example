@@ -1,0 +1,26 @@
+---
+# This config is _only_ used when first bootstrapping a Puppetserver.
+# We can't use the regular hiera file as the "trusted" facts aren't available during a `puppet apply`
+# This has been designed to work with the puppet-server.ps1 script from the puppet-bootstrap repo.
+# Declarations here should be pretty generic - the bare minimum to get Puppet going via `puppet apply`
+# before `puppet agent` takes over and can use our full hiera configuration
+classes:
+  - puppetserver
+puppetserver::puppet_majorversion: 7
+# By default we spin the Puppetserver up from the production branch to ensure stability
+puppetserver::puppet_agent_environment: 'production'
+
+# Set the alt names that Puppet can respond to, this is important to do as part of the bootstrapping process as it can only be
+# done during the initial CA set-up on the Puppetserver
+puppetserver::dns_alt_names:
+    - "%{::hostname}"
+    - "puppetserver"
+    - "puppetserver.%{::domain}"
+
+# Manage our sources for r10k
+puppetserver::codemanagement::sources:
+  - source_name: 'example_repo'
+    remote_path: 'git@github.com:Brownserve-UK/puppet_hiera_example.git'
+
+# Don't install PuppetDB on the bootstrap environment as the certificates won't exist until we run a puppet agent -t
+puppetserver::install_puppetdb: false
