@@ -42,7 +42,6 @@ class puppetserver (
 ) {
   include puppetserver::codemanagement
   include puppetserver::firewall
-  include common::linux::ntpclient
 
   # Ensure the 'puppet' user and group are present
   group { $puppet_group:
