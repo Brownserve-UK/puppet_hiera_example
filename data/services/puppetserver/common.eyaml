@@ -1,19 +1,11 @@
-# This should take affect after the bootstrap and should contain any values relevant to ALL puppet servers.
-classes: 
-    - puppetserver
-    - common
+---
+classes:
+  - puppetserver
+  - puppetserver::puppetboard
 
-# In case we use Puppet agent to bring up another Puppetserver we'll set the alt names here too
-puppetserver::dns_alt_names:
-    - "%{::hostname}"
-    - "puppetserver"
-    - "puppetserver.%{::domain}"
+puppetserver::codemanagement::sources:
+  - source_name: 'example_repo'
+    remote_path: 'git@github.com:Brownserve-UK/puppet_hiera_example.git'
 
-# Probably wise to NOT do this in a real production environment, but this saves messing with certs when testing
-puppetserver::puppetdb_http_interface: "0.0.0.0"
-puppetserver::firewall::enable_puppetdb_http: true
-puppetserver::autosign_entries:
-    - "*.local"
-    - "*.dev"
-
-common::manage_puppet: false
+postgresql::server::contrib::package_name: postgresql-contrib # Fixes idempotency issues
+puppetserver::puppetboard::puppetboard_version: '5.4.0'

@@ -1,7 +1,7 @@
 ---
-# BOOTSTRAP hiera config when building a Puppet server from scratch.
-# This contains just the bare minimum to stand up a working Puppetserver and get things
-# up and running again as quickly as possible.
+# BOOTSTRAP hiera config when building a Puppet server from scratch for our dev environment.
+# We need to keep this in its own hiera file as we may use different values when running in dev
+# especially if we're testing upgrading the Puppetserver
 version: 5
 
 defaults:
@@ -12,7 +12,7 @@ hierarchy:
 
     - name: "Common data (yaml version)"
       paths:
-          - "data/common/%{environment}.yaml"
+          - "data/common/dev.yaml"
 
     - name: "Common secrets (eyaml)"
       lookup_key: eyaml_lookup_key
@@ -20,5 +20,5 @@ hierarchy:
           pkcs7_private_key: /etc/puppetlabs/puppet/keys/private_key.pkcs7.pem
           pkcs7_public_key:  /etc/puppetlabs/puppet/keys/public_key.pkcs7.pem
       paths:
-          - "data/bootstrap/%{environment}.eyaml"
-          - "data/common/%{environment}.eyaml"
+          - "data/bootstrap/dev.eyaml"
+          - "data/common/dev.eyaml"

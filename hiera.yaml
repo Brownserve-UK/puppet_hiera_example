@@ -1,22 +1,28 @@
 ---
-# This file contains the configuration information for production Hiera.
-version: 5 # The version of Hiera to use
+# This file configures hiera.
+# Hiera allows you to store data/parameter values that may needed when you configure your nodes
 
+# The version of hiera to use
+version: 5
+
+# Set defaults
 defaults:
   datadir: .
   data_hash: yaml_data
 
-# The below instructs Hiera in what order to look up data and from what sources
-# see https://puppet.com/docs/hiera/3.3/lookup_types.html#native-merging for more information
+# This sets the hierarchy for looking up data.
+# As per hiera merging - higher stuff on the list overwrites the lower if keys share the same name:
+# https://puppet.com/docs/hiera/3.3/lookup_types.html#native-merging
 hierarchy:
-    # First start with eyaml (encrypted YAML), this makes sure we've get secure stuff first and foremost 
+    # Prefer eyaml - it's good to use encryption where we can.
     - name: "Per-node secrets (eyaml)"
-      lookup_key: eyaml_lookup_key # Tells Hiera to use eyaml
-      # The location of your puppet masters eyaml keys on your Puppet server
+      lookup_key: eyaml_lookup_key # eyaml (encrypted yaml) backend
       options:
-          pkcs7_private_key: /etc/puppetlabs/puppet/keys/private_key.pkcs7.pem 
+          pkcs7_private_key: /etc/puppetlabs/puppet/keys/private_key.pkcs7.pem
           pkcs7_public_key:  /etc/puppetlabs/puppet/keys/public_key.pkcs7.pem
       paths:
+      # This order ensures that eyaml files that are meant for individual nodes trump more generic configurations
+      # I believe this to be a sensible order but you may wish to edit this if it doesn't work for your needs
           - "data/%{trusted.certname}.eyaml"
           - "data/services/%{trusted.extensions.pp_service}/%{trusted.extensions.pp_environment}/%{trusted.extensions.pp_role}/%{trusted.certname}.eyaml"
           - "data/services/%{trusted.extensions.pp_service}/%{trusted.extensions.pp_environment}/%{trusted.certname}.eyaml"
@@ -24,14 +30,14 @@ hierarchy:
           - "data/services/%{trusted.extensions.pp_service}/%{trusted.extensions.pp_environment}/common.eyaml"
           - "data/services/%{trusted.extensions.pp_service}/%{trusted.extensions.pp_role}.eyaml"
           - "data/services/%{trusted.extensions.pp_service}/common.eyaml"
-    # Next look up any common data that applies to ALL nodes (both encrypted and unencrypted)
+    # Allow common data to specified in either yaml or encrypted yaml
     - name: "Common data (yaml version)"
       paths:
-          - "data/common.yaml"
+          - "data/common/%{environment}.yaml"
     - name: "Common secrets (eyaml)"
       lookup_key: eyaml_lookup_key
       options:
           pkcs7_private_key: /etc/puppetlabs/puppet/keys/private_key.pkcs7.pem
           pkcs7_public_key:  /etc/puppetlabs/puppet/keys/public_key.pkcs7.pem
       paths:
-          - "data/common.eyaml"
+          - "data/common/%{environment}.eyaml"

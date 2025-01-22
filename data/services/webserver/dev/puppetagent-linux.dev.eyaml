@@ -1,4 +1,0 @@
----
-# This is an example of where your config could go for a Dev web server, for now we'll just include common
-classes:
-  - common

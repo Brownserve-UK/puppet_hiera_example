@@ -1,9 +1,23 @@
 {
     "cSpell.words": [
+        "Absolutepath",
+        "clientcert",
+        "codemanagement",
+        "createkeys",
         "datadir",
+        "dport",
+        "iniface",
         "majorversion",
+        "moduledir",
+        "pkill",
         "puppetboard",
+        "puppetdb",
+        "puppetfile",
         "puppetlabs",
-        "puppetserver"
+        "puppetserver",
+        "ssldir",
+        "Stdlib",
+        "vcsrepo",
+        "Voxpupuli"
     ]
 }

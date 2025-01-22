@@ -1,0 +1,14 @@
+# frozen_string_literal: true
+
+# This file contains useful gems that aid in writing Puppet code.
+
+source 'https://rubygems.org'
+
+group :development do
+  gem 'puppet-lint'
+  gem 'rubocop'
+  gem 'yamllint'
+end
+
+# The hiera-eyaml gem is used to encrypt hiera data
+gem 'hiera-eyaml'
