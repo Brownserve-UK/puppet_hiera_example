@@ -6,7 +6,7 @@ class example_module::base {
   # We require the example_module::params class so we can access the parameters
   require example_module::params
   # We use the $base_directory parameter to create the directory
-  file { 'base_directory':
+  file { $example_module::params::base_directory:
     ensure => 'directory',
   }
 
