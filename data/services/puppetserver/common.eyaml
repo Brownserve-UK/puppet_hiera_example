@@ -1,0 +1,11 @@
+---
+classes:
+  - puppetserver
+  - puppetserver::puppetboard
+
+puppetserver::codemanagement::sources:
+  - source_name: 'example_repo'
+    remote_path: 'git@github.com:Brownserve-UK/puppet_hiera_example.git'
+
+postgresql::server::contrib::package_name: postgresql-contrib # Fixes idempotency issues
+puppetserver::puppetboard::puppetboard_version: '5.4.0'
