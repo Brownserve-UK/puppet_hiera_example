@@ -1,5 +1,0 @@
----
-# When testing changes in the dev environment you probably want to set the puppet_environment to your feature
-# branch, this is because this parameter configures the `[agent]` section of `puppet.conf` with the given
-# environment, if you set it to your environment you won't have to supply `--environment` to every puppet run :)
-puppetserver::puppet_majorversion: 7

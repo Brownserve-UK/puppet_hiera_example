@@ -33,11 +33,11 @@ hierarchy:
     # Allow common data to specified in either yaml or encrypted yaml
     - name: "Common data (yaml version)"
       paths:
-          - "data/common/%{environment}.yaml"
+          - "data/common/production.yaml"
     - name: "Common secrets (eyaml)"
       lookup_key: eyaml_lookup_key
       options:
           pkcs7_private_key: /etc/puppetlabs/puppet/keys/private_key.pkcs7.pem
           pkcs7_public_key:  /etc/puppetlabs/puppet/keys/public_key.pkcs7.pem
       paths:
-          - "data/common/%{environment}.eyaml"
+          - "data/common/production.eyaml"
